@@ -4,4 +4,5 @@
 *.ozf
 *.swp
 *.swo
-
+*.out*
+*.json
