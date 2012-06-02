@@ -25,7 +25,7 @@ Writing a native module comes in 5 steps.
 Modules in VM 2.0 is vastly different from the [1.4 foreign interface](http://www.mozart-oz.org/documentation/foreign/index.html). Benefiting from C++11, most of the macros can be eliminated. The way to define a module is to create several classes like this in a header file:
 
 ```c++
-#include <mozartcore.hh>
+#include <mozart.hh>
 
 using mozart::builtins::In;
 using mozart::builtins::Out;
@@ -58,7 +58,7 @@ struct ModSomething : mozart::builtins::Module
 
 Note the two `using` statements. Because of a defect in the generator, the `in_arg`'s and `out_arg`'s types must be `In` and `Out`, and cannot be qualified.
 
-In 1.4, the mapping from atoms to functions is filled out manually in `oz_init_module()`. In 2.0, this task is done automatically with help of clang/LLVM. But this made compiling the module a 3-step process.
+In 1.4, the mapping from atoms to functions is filled out manually in `oz_init_module()`. In 2.0, currently this task is done automatically with help of clang/LLVM. But this made compiling the module a 3-step process.
 
 1. Dump the AST of the header file.
 2. Parse the AST and generate the module information into a JSON file, which will be read by the bootstrap compiler.
@@ -82,9 +82,9 @@ This `*.astbi` file is then converted to a JSON description using the Mozart VM 
 
 ## The Oz side
 
-The bootstrap compiler does not support dynamic linking or importing `*.ozf` files, so the only way to insert Oz code is via embedding or changing the standard library. But even worse, the compiler only recognizes the built-in module import via `Base.oz`. Therefore, the only way to use our extension module is by modifying `Base.oz`.
+The bootstrap compiler does not support dynamic linking or importing `*.ozf` files yet, so the only way to insert Oz code is via embedding or changing the standard library. But even worse, the compiler only recognizes the built-in module import via `Base.oz`. Therefore, the only way to use our extension module is by modifying `Base.oz`.
 
-The `combine_base_oz.py` file provided here is a simple Python script to combine the original `BaseBuilt.oz` and our custom `Base.oz` functor into the same file. 
+The `combine_base_oz.py` file provided here is a simple Python script to combine the original `BaseBuilt.oz` and our custom `Base.oz` functor into the same file.
 
     ./combine_base_oz.py /path/to/mozart2/lib/base/BaseBuilt.oz CustomBase.oz > Base.out.oz
 
