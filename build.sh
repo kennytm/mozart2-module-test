@@ -20,11 +20,6 @@ case $1 in
         ;;
 
     build)
-        echo "Combining Base.oz into BaseBuilt.oz..."
-        if [ ! -f Base.out.oz ]; then
-            ./combine_base_oz.py $MOZART_DIR/lib/base/BaseBuilt.oz Base.oz > Base.out.oz
-        fi
-
         echo "Generating JSON file for $HH_NAME..."
         if [ ! -f $HH_NAME.out.astbi ]; then
             clang++ -std=c++11 -stdlib=libc++ -I$MOZART_DIR/vm/main -femit-ast -S -o $HH_NAME.out.astbi $HH_NAME.hh
@@ -40,7 +35,9 @@ case $1 in
         echo "Translating Test.oz..."
         if [ ! -f Test.out.cc ]; then
             java -jar $BOOTCOMPILER_DIR/target/scala-2.9.1/bootcompiler_2.9.1-2.0-SNAPSHOT-one-jar.jar \
-                -m mvm2.out -b Base.out.oz -o Test.out.cc Test.oz
+                -m $MOZART_DIR/vm/main -m mvm2.out \
+                -b $MOZART_DIR/lib/base/BaseBuilt.oz -b Base.oz \
+                -o Test.out.cc Test.oz
         fi
 
         echo "Compiling everything to a.out..."
