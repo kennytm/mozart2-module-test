@@ -25,20 +25,16 @@ case $1 in
             ./combine_base_oz.py $MOZART_DIR/lib/base/BaseBuilt.oz Base.oz > Base.out.oz
         fi
 
-        echo "Cloning MVM2..."
-        if [ ! -d mvm2.out ]; then
-            cp -r $MOZART_DIR/vm/main mvm2.out
-        fi
-
         echo "Generating JSON file for $HH_NAME..."
         if [ ! -f $HH_NAME.out.astbi ]; then
-            clang++ -std=c++11 -stdlib=libc++ -Imvm2.out -femit-ast -S -o $HH_NAME.out.astbi $HH_NAME.hh
+            clang++ -std=c++11 -stdlib=libc++ -I$MOZART_DIR/vm/main -femit-ast -S -o $HH_NAME.out.astbi $HH_NAME.hh
+            mkdir mvm2.out
             $MOZART_DIR/generator/main/generator builtins $HH_NAME.out.astbi mvm2.out/
         fi
 
         echo "Compiling $HH_NAME.cc..."
         if [ ! -f $HH_NAME.o ]; then
-            g++ -std=c++11 -Imvm2.out -c -o $HH_NAME.o $HH_NAME.cc
+            g++ -std=c++11 -I$MOZART_DIR/vm/main -c -o $HH_NAME.o $HH_NAME.cc
         fi
 
         echo "Translating Test.oz..."
@@ -49,7 +45,7 @@ case $1 in
 
         echo "Compiling everything to a.out..."
         if [ ! -f a.out ]; then
-            g++ -std=c++11 -Imvm2.out Test.out.cc $HH_NAME.o mvm2.out/libmozartvm.a
+            g++ -std=c++11 -I$MOZART_DIR/vm/main Test.out.cc $HH_NAME.o $MOZART_DIR/vm/main/libmozartvm.a
         fi
         ;;
 
