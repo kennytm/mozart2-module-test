@@ -7,16 +7,23 @@ namespace test {
 
 using mozart::builtins::In;
 using mozart::builtins::Out;
+using mozart::builtins::Module;
+using mozart::builtins::Builtin;
+using mozart::VM;
 
-struct ModGetEnv : mozart::builtins::Module
+#ifndef MOZART_BUILTIN_GENERATOR
+#include "getenvbuiltins.hh"
+#endif
+
+struct ModGetEnv : Module
 {
-    ModGetEnv() : mozart::builtins::Module("GetEnv") {}
+    ModGetEnv() : Module("GetEnv") {}
 
-    struct GetEnv : mozart::builtins::Builtin<GetEnv>
+    struct GetEnv : Builtin<GetEnv>
     {
         GetEnv() : Builtin("getenv") {};
 
-        mozart::OpResult operator()(mozart::VM vm, In key, Out value);
+        void operator()(VM vm, In key, Out value);
     };
 };
 
