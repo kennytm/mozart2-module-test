@@ -1,7 +1,7 @@
 #!/bin/sh
 
 if [ -z $MOZART_SRC_DIR ]; then
-    MOZART_SRC_DIR=../mozart2
+    MOZART_SRC_DIR=../mozart2-vm
 fi
 if [ -z $MOZART_DIR ]; then
     MOZART_DIR=$MOZART_SRC_DIR/build/debug
@@ -45,7 +45,7 @@ case $1 in
         if [ ! -f $HH_NAME.out.astbi ]; then
             clang++ -std=c++11 -stdlib=libc++ -S \
                 -I$MOZART_DIR/vm/main \
-                -femit-ast \
+                -emit-ast \
                 -DMOZART_BUILTIN_GENERATOR \
                 -o $HH_NAME.out.astbi \
                 $HH_NAME.hh

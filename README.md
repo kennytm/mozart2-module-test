@@ -101,8 +101,8 @@ In 1.4, the mapping from atoms to functions is filled out manually in `oz_init_m
 The AST of the header file is dumped using clang with the command:
 
     clang++ -std=c++11 -stdlib=libc++ \
-            -I/path/to/mozart2/vm/main \
-            -femit-ast \
+            -I/path/to/mozart2-vm/vm/main \
+            -emit-ast \
             -o something.astbi
             -DMOZART_BUILTIN_GENERATOR
             something.hh
@@ -111,7 +111,7 @@ This `.astbi` file used to generate metadata using Mozart VM 2.0's "generator":
 
     mkdir something.out
 
-    /path/to/mozart2/generator/main/generator \
+    /path/to/mozart2-vm/generator/main/generator \
 	    builtins \
             something.astbi \
             something.out/ \
@@ -136,8 +136,8 @@ As described in mozart2-bootcompiler's description, we first build the base envi
 	-o Base.out.cc \
 	-h boostenv.hh \
         -h something.hh \
-	-m path/to/mozart2/vm/main \
-	-m path/to/mozart2/boostenv/main \
+	-m path/to/mozart2-vm/vm/main \
+	-m path/to/mozart2-vm/boostenv/main \
         -m something.out \
 	-b baseenv.out.txt \
 	path/to/mozart2-library/base/Base.oz \
@@ -149,8 +149,8 @@ Then compile the file executable as usual:
 	-o Example.out.cc \
 	-h boostenv.hh \
         -h something.hh \
-	-m path/to/mozart2/vm/main \
-	-m path/to/mozart2/boostenv/main \
+	-m path/to/mozart2-vm/vm/main \
+	-m path/to/mozart2-vm/boostenv/main \
         -m something.out \
 	-b baseenv.out.txt \
 	Example.oz
@@ -159,7 +159,7 @@ Then compile the file executable as usual:
 
 1. These modules are required to boot the program:
 
- * mozart2/boostenv/lib/OS.oz
+ * mozart2-vm/boostenv/lib/OS.oz
  * mozart2-library/init/Init.oz
  * mozart2-library/dp/URL.oz
  * mozart2-library/sys/Property.oz
@@ -176,12 +176,12 @@ Finally we create the linker file:
 	--linker \
 	-o Example.linked.out.cc \
 	-h boostenv.hh \
-	-m path/to/mozart2/vm/main \
-	-m path/to/mozart2/boostenv/main \
+	-m path/to/mozart2-vm/vm/main \
+	-m path/to/mozart2-vm/boostenv/main \
 	-m something.out \
 	-b baseenv.out.txt \
 	Example.oz \
-        /path/to/mozart2/boostenv/lib/OS.oz \
+        /path/to/mozart2-vm/boostenv/lib/OS.oz \
         ......
 
 We can see the pattern here, that you must repeat the six `-h`, `-m` and `-b` arguments.
@@ -189,13 +189,13 @@ We can see the pattern here, that you must repeat the six `-h`, `-m` and `-b` ar
 After all the `.cc` files are generated, we could compile them into native code:
 
     g++ -std=c++11 \
-        -I/path/to/mozart2/vm/main \
-        -I/path/to/mozart2/boostenv/main \
+        -I/path/to/mozart2-vm/vm/main \
+        -I/path/to/mozart2-vm/boostenv/main \
         -Isomething.out \
         -I. \
         Example.out.cc Example.linked.out.cc something.cc .... \
-        /path/to/mozart2/boostenv/main/libmozartvmboost.a \
-        /path/to/mozart2/vm/main/libmozartvm.a \
+        /path/to/mozart2-vm/boostenv/main/libmozartvmboost.a \
+        /path/to/mozart2-vm/vm/main/libmozartvm.a \
         -lboost_system -lboost_filesystem -lboost_thread -pthread \
 
 
